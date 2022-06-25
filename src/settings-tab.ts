@@ -58,6 +58,53 @@ export default class ImageUploaderSettingTab extends PluginSettingTab {
             });
 
         new Setting(containerEl)
+            .setName("Post Body")
+            .setDesc("Set Post Body")
+            .addTextArea((text)=>{
+                text
+                    .setPlaceholder("")
+                    .setValue(this.plugin.settings.body)
+                    .onChange(async (value) => {
+                        try {
+                            this.plugin.settings.body = value;
+                            await this.plugin.saveSettings();
+                        }
+                        catch (e) {
+                            console.log(e)
+                        }
+                    })
+            })
+
+        new Setting(containerEl)
+            .setName("Auto Upload Album")
+            .setDesc("Send To Specific Album When Upload(This Option Will Replace Param In Body)")
+            .addToggle((toggle) => {
+                toggle
+                    .setValue(this.plugin.settings.enableUploadToAlbum)
+                    .onChange(async (value) => {
+                        this.plugin.settings.enableUploadToAlbum = value;
+                        await this.plugin.saveSettings();
+                        this.display();
+                    })
+            })
+
+        if (this.plugin.settings.enableUploadToAlbum) {
+                new Setting(containerEl)
+                    .setName("Upload Album")
+                    .setDesc("Default Upload Album")
+                    .addText((text) => {
+                        text
+                            .setPlaceholder("")
+                            .setValue(this.plugin.settings.defaultUploadAlbum)
+                            .onChange(async (value) => {
+                                this.plugin.settings.defaultUploadAlbum = value;
+                                await this.plugin.saveSettings();
+                            })
+                    });
+            }
+        
+
+        new Setting(containerEl)
             .setName("Enable Resize")
             .setDesc("Resize the image before uploading")
             .addToggle((toggle) => {
